@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stillwater</title>
+<meta name="description" content="A private companion for leaving lust behind, one calm day at a time.">
+<meta name="theme-color" content="#0E1A1E">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stillwater">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one phone-width column (max 460px), scrolling main area, tab bar below. Dark-first, sand accent on deep teal ink. */
+:root{
+  --bg:#0E1A1E; --surface:#162A30; --surface2:#1D353C; --line:#22393F; --line2:#2C474E;
+  --fg:#F2EEE4; --muted:#A3B7BA; --dim:#8FA5A9;
+  --sand:#E6BC82; --on-sand:#0E1A1E; --sage:#86C0A4; --sage-bg:#1E3F37; --scrim:rgba(5,12,14,.62);
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#EDF3F2; --surface:#FFFFFF; --surface2:#E0EBE9; --line:#D2E0DD; --line2:#B9CCC9;
+    --fg:#12262B; --muted:#44595E; --dim:#566C71;
+    --sand:#9A5A12; --on-sand:#FFFFFF; --sage:#2A7154; --sage-bg:#D3EADF; --scrim:rgba(10,25,30,.4);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#EDF3F2; --surface:#FFFFFF; --surface2:#E0EBE9; --line:#D2E0DD; --line2:#B9CCC9;
+  --fg:#12262B; --muted:#44595E; --dim:#566C71;
+  --sand:#9A5A12; --on-sand:#FFFFFF; --sage:#2A7154; --sage-bg:#D3EADF; --scrim:rgba(10,25,30,.4);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-font-smoothing:antialiased}
+button,textarea,input{font-family:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--sand);outline-offset:2px}
+.app{height:100%;display:flex;flex-direction:column;max-width:460px;margin:0 auto;position:relative}
+main{flex:1;min-height:0;overflow-y:auto;padding:18px 2px 20px;display:flex;flex-direction:column}
+h1,h2,h3,p{margin:0}
+h1,.display{font-family:var(--display);font-weight:400;text-wrap:balance}
+.eyebrow{font-size:12px;letter-spacing:.14em;font-weight:700;color:var(--dim);text-transform:uppercase}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center}
+.between{justify-content:space-between}
+.gap8{gap:8px}.gap12{gap:12px}
+.icon-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:var(--surface);display:flex;align-items:center;justify-content:center;padding:0;flex:none}
+.icon-btn:disabled{opacity:.35;cursor:default}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 16px;border-radius:22px;border:1px solid var(--line2);background:var(--surface2);font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px}
+.chip[aria-pressed="true"]{background:var(--sand);border-color:var(--sand);color:var(--on-sand);font-weight:700}
+.chip.sage[aria-pressed="true"]{background:var(--sage);border-color:var(--sage);color:var(--bg)}
+.btn{width:100%;min-height:56px;border-radius:28px;border:1px solid transparent;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 20px}
+.btn.primary{background:var(--sand);color:var(--on-sand)}
+.btn.ghost{background:transparent;border-color:var(--line2);min-height:48px;font-size:14px;font-weight:600}
+.btn.done{background:var(--sage-bg);color:var(--sage);cursor:default}
+.linkbtn{background:none;border:none;padding:10px;min-height:44px;color:var(--muted);font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.tabbar{display:flex;border-top:1px solid var(--line);padding:0 2px 6px;background:var(--bg)}
+.tab{flex:1;min-width:0;min-height:58px;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:700;color:var(--dim)}
+.tab[aria-current="page"]{color:var(--sand)}
+.ringwrap{position:relative;width:208px;height:208px;margin:6px auto 0}
+.ringwrap svg{transform:rotate(-90deg);display:block}
+.ringnum{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ringnum b{font-family:var(--display);font-weight:400;font-size:76px;line-height:1;font-variant-numeric:tabular-nums}
+.week{display:flex;justify-content:space-between;margin:18px 6px 0}
+.wd{display:flex;flex-direction:column;align-items:center;gap:8px;width:36px;font-size:11px;font-weight:700;color:var(--dim);letter-spacing:.06em}
+.dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.dot.free{background:var(--sage-bg);color:var(--sage)}
+.dot.today{border:2px solid var(--sand)}
+.dot.today::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--sand)}
+.dot.slip{border:1.5px dashed var(--muted)}
+.dot.none{border:1.5px solid var(--line)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{padding:12px 14px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.stat b{display:block;font-family:var(--display);font-weight:400;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:6px;font-size:11.5px;font-weight:600;color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.cal .dw{text-align:center;font-size:11px;font-weight:700;color:var(--dim);height:18px}
+.cd{height:34px;border-radius:10px;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.cd.free{background:var(--sage-bg);color:var(--sage)}
+.cd.slip{border:1.5px dashed var(--muted);color:var(--muted)}
+.cd.today{border:2px solid var(--sand);color:var(--sand)}
+.cd.future,.cd.none{color:var(--dim);font-weight:600}
+.bar{display:flex;align-items:center;gap:12px;min-height:28px}
+.bar .lb{width:108px;font-size:13px;font-weight:600;flex:none}
+.bar .tr{flex:1;height:10px;border-radius:5px;background:var(--surface2)}
+.bar .tr i{display:block;height:10px;border-radius:5px;background:var(--sand)}
+.bar .vl{width:20px;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.entry{padding:14px 0;border-top:1px solid var(--line)}
+.entry:first-child{border-top:none}
+.entry small{font-size:12px;font-weight:700;color:var(--dim);letter-spacing:.04em}
+.scrim{position:absolute;inset:0;background:var(--scrim);display:flex;align-items:flex-end;z-index:20}
+.sheet{width:100%;max-height:92%;overflow-y:auto;background:var(--bg);border:1px solid var(--line2);border-bottom:none;border-radius:28px 28px 0 0;padding:22px 18px 28px}
+.toast{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);width:max-content;max-width:92%;background:var(--fg);color:var(--bg);padding:12px 18px;border-radius:22px;font-size:14px;font-weight:600;z-index:30;text-align:center}
+.mark{width:44px;height:44px}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+textarea{display:block;width:100%;height:96px;margin-top:12px;padding:14px;border-radius:18px;border:1px solid var(--line2);background:var(--surface);font-size:15px;line-height:1.45;resize:none}
+textarea::placeholder,.field::placeholder{color:var(--dim)}
+.field{display:block;width:100%;min-height:48px;padding:0 14px;border-radius:16px;border:1px solid var(--line2);background:var(--surface);font-size:15px}
+.lbl{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.listrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.listrow:first-child{border-top:none;padding-top:0}
+.rowbtn{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:6px 0;background:none;border:none;text-align:left;font-size:14.5px;font-weight:600}
+.cb{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--line2);flex:none;display:flex;align-items:center;justify-content:center}
+.cb.on{background:var(--sage);border-color:var(--sage);color:var(--bg)}
+/* rescue */
+.seg{display:flex;gap:4px;padding:4px;background:var(--surface);border:1px solid var(--line);border-radius:26px}
+.seg button{flex:1;min-width:0;min-height:44px;border:none;border-radius:22px;background:transparent;font-size:13px;font-weight:700;color:var(--muted);padding:0 4px}
+.seg button[aria-pressed="true"]{background:var(--sand);color:var(--on-sand)}
+.nums{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;justify-items:center}
+.num{width:100%;max-width:60px;aspect-ratio:1;border-radius:50%;border:1px solid var(--line2);background:var(--surface);font-size:18px;font-weight:700;font-variant-numeric:tabular-nums;padding:0}
+.num[aria-pressed="true"]{background:var(--sand);color:var(--on-sand);border-color:var(--sand)}
+.orbwrap{width:150px;height:150px;position:relative;margin:6px auto 0}
+.orb{position:absolute;inset:0;transform:scale(.72)}
+.orb i{position:absolute;border-radius:50%}
+.orb .o1{inset:0;border:1px solid var(--line2)}
+.orb .o2{inset:18px;background:var(--surface2)}
+.orb .o3{inset:42px;background:var(--sand)}
+.dock{position:sticky;bottom:0;background:var(--bg);padding:12px 0 4px;margin-top:auto}
+/* pin */
+.keys{display:grid;grid-template-columns:repeat(3,72px);gap:14px;justify-content:center}
+.key{width:72px;height:72px;border-radius:50%;border:1px solid var(--line2);background:var(--surface);font-size:26px;font-family:var(--display);padding:0;display:flex;align-items:center;justify-content:center}
+.pdots{display:flex;gap:16px;justify-content:center}
+.pdots i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--sand);display:block}
+.pdots i.on{background:var(--sand)}
+</style>
+
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+(function(){
+'use strict';
+var KEY='stillwater.v1', DAY=86400000, HOLD=120;
+var RM=false;try{RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
+var REASONS=[['relationships','My relationships'],['focus','My focus'],['respect','Self-respect'],['faith','My faith'],['health','My health'],['family','My family']];
+var MOODS=[['calm','Calm','Good. Calm days are the ones to protect. Keep your evening simple.'],['tired','Tired','Tired is a high-risk hour. Plan an early night and keep your phone out of the bedroom.'],['stressed','Stressed','Stress looks for relief. Take a walk first, and message someone you trust.'],['lonely','Lonely','Loneliness is a signal, not a flaw. Reach out to one person today.'],['restless','Restless','Restless energy needs somewhere to go. Move your body before the evening.']];
+var TRIGS=[['late','Late night'],['bored','Boredom'],['stress','Stress'],['lonely','Loneliness'],['social','Social media'],['alone','Home alone']];
+var MILES=[[1,'first-day mark'],[3,'3-day mark'],[7,'1-week mark'],[14,'2-week mark'],[30,'30-day mark'],[60,'60-day mark'],[90,'90-day mark'],[180,'6-month mark'],[365,'1-year mark']];
+var WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MONL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DEFAULT_MSG="I'm having a hard moment and could use a check-in. No advice needed. Just stay with me for a few minutes.";
+var GROUND=[[5,'things you can see','Look around slowly and name each one.'],[4,'things you can touch','Feel the fabric, the table, your feet on the floor.'],[3,'things you can hear','Near sounds first, then far ones.'],[2,'things you can smell','Or two smells you like.'],[1,'thing you can taste','Take a sip of water.']];
+var MOVES=['Splash cold water on my face','Stand up and leave this room','Do 20 push-ups or squats','Walk outside for ten minutes','Text or call someone'];
+var GUARDS=[['phone','My phone charges outside the bedroom'],['block','Content blockers are on for all my devices'],['feeds','I muted or removed accounts that trigger me'],['partner','Someone I trust knows I am doing this'],['routine','I have a wind-down routine for late evenings']];
+var STARTERS=[['late','put my phone in the kitchen and get into bed'],['bored','walk around the block'],['stress','call someone I trust'],['alone','go to a café or library'],['social','log out and put my phone in another room']];
+var PHASES=['Breathe in','Hold','Breathe out','Hold'];
+var BUCKETS=['Morning','Afternoon','Evening','Late night'];
+
+var IC={
+ home:'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
+ prog:'<path d="M4 19V5M4 19h16M8 15l3-4 3 2 4-6"/>',
+ refl:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 8.5h6M9 12.5h6"/>',
+ kit:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/>',
+ rescue:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M6.3 6.3l3.2 3.2M14.5 14.5l3.2 3.2M17.7 6.3l-3.2 3.2M9.5 14.5l-3.2 3.2"/>',
+ set:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ chat:'<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ prev:'<path d="M15 6l-6 6 6 6"/>',
+ next:'<path d="M9 6l6 6-6 6"/>',
+ copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ back:'<path d="M21 6H9l-6 6 6 6h12z"/><path d="M13 10l4 4M17 10l-4 4"/>'
+};
+function ic(n,s,sw){s=s||22;sw=sw||1.75;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+sw+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[n]+'</svg>';}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function pad(n){return (n<10?'0':'')+n;}
+function ymd(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function dnum(d){return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/DAY);}
+function label(list,id){for(var i=0;i<list.length;i++){if(list[i][0]===id)return list[i][1];}return id;}
+function hpin(p){var x=5381,s='sw1|'+p+'|stillwater',i;for(i=0;i<s.length;i++){x=((x<<5)+x+s.charCodeAt(i))|0;}return String(x);}
+function mmss(s){return Math.floor(s/60)+':'+pad(s%60);}
+
+/* ---------- state ---------- */
+function defaults(){return {onboarded:false,reasons:['relationships','focus'],started:null,firstDay:null,longest:0,slips:[],urges:[],checkins:{},pledges:{},contact:{name:'',num:''},plans:[],guards:{},letter:'',pin:'',seenMile:0};}
+function load(){
+  try{var r=localStorage.getItem(KEY);if(r){var o=JSON.parse(r),d=defaults();for(var k in d){if(o&&o[k]!==undefined)d[k]=o[k];}return d;}}catch(e){}
+  return defaults();
+}
+var S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+var V={tab:'home',stage:'start',calOff:0,draft:null,saved:false,
+  rTrig:null,rBefore:null,rAfter:null,rTool:'breathe',rSecs:0,gStep:0,mDone:{},rStart:0,
+  planTrig:null,planText:'',modal:null,toast:'',dataText:'',erase:false,restoreOpen:false,restoreText:'',
+  pinFlow:S.pin?'unlock':null,pinBuf:'',pinFirst:'',pinMsg:'',forgot:false};
+var timer=null,toastT=null,lastSig='',lastPhase=-1;
+
+function today(){return new Date();}
+function streak(){return S.started?Math.max(0,dnum(today())-dnum(new Date(S.started))):0;}
+function longest(){return Math.max(S.longest||0,streak());}
+function dayState(d){
+  var k=ymd(d),t=ymd(today());
+  if(k>t)return 'future';
+  if(S.slips.indexOf(k)>-1)return 'slip';
+  if(k===t)return 'today';
+  if(!S.firstDay||k<S.firstDay)return 'none';
+  return 'free';
+}
+function todayRec(){return S.checkins[ymd(today())]||{};}
+function toast(msg){
+  V.toast=msg;clearTimeout(toastT);render();
+  toastT=setTimeout(function(){V.toast='';render();},3400);
+}
+function contactLabel(){var c=S.contact;return c.name?(c.name+(c.num?' ('+c.num+')':'')):'';}
+
+/* ---------- shared views ---------- */
+function tabbar(){
+  var t=[['home','Home','home'],['progress','Progress','prog'],['reflect','Reflect','refl'],['kit','Toolkit','kit'],['rescue','Rescue','rescue']];
+  return '<nav class="tabbar" aria-label="Main">'+t.map(function(x){
+    return '<button class="tab" data-a="tab" data-v="'+x[0]+'"'+(V.tab===x[0]?' aria-current="page"':'')+'>'+ic(x[2])+x[1]+'</button>';
+  }).join('')+'</nav>';
+}
+function nums(sel,act){
+  var h='<div class="nums">',i;
+  for(i=1;i<=10;i++){h+='<button class="num" aria-label="Strength '+i+' of 10" aria-pressed="'+(sel===i)+'" data-a="'+act+'" data-v="'+i+'">'+i+'</button>';}
+  return h+'</div><div class="row between muted" style="margin-top:8px;font-size:12px;font-weight:600"><span>Faint</span><span>Overwhelming</span></div>';
+}
+
+function vPin(){
+  var f=V.pinFlow,i;
+  var title=f==='unlock'?'Welcome back':(f==='new'?'Choose a 4-digit PIN':'Confirm your PIN');
+  var sub=V.pinMsg||(f==='unlock'?'Enter your PIN to open Stillwater.':(f==='new'?'This keeps casual eyes out. It is a lock, not encryption.':'Enter it once more.'));
+  var dots='';for(i=0;i<4;i++){dots+='<i class="'+(i<V.pinBuf.length?'on':'')+'"></i>';}
+  var keys='';
+  ['1','2','3','4','5','6','7','8','9'].forEach(function(k){keys+='<button class="key" aria-label="'+k+'" data-a="key" data-v="'+k+'">'+k+'</button>';});
+  keys+='<span></span><button class="key" aria-label="0" data-a="key" data-v="0">0</button><button class="key" aria-label="Delete" data-a="keydel">'+ic('back',26,1.6)+'</button>';
+  var foot;
+  if(f==='unlock'){
+    foot=V.forgot?'<p class="muted" style="font-size:13px;text-align:center;margin-top:8px">Forgetting your PIN means erasing your data on this device. Your streak and entries will be lost.</p><button class="btn ghost" style="margin-top:10px;border-color:var(--sand);color:var(--sand)" data-a="pinErase">Erase everything and start over</button>':'<div style="text-align:center"><button class="linkbtn" data-a="forgot">Forgot PIN?</button></div>';
+  }else{foot='<div style="text-align:center"><button class="linkbtn" data-a="pinCancel">Cancel</button></div>';}
+  return '<main style="justify-content:center;gap:28px;padding-top:30px">'+
+   '<div style="text-align:center"><svg class="mark" viewBox="0 0 44 44" fill="none" stroke="var(--sand)" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="19" opacity=".35"/><circle cx="22" cy="22" r="12.5" opacity=".65"/><circle cx="22" cy="22" r="6" fill="var(--sand)" stroke="none"/></svg>'+
+   '<h1 style="font-size:30px;line-height:1.15;margin-top:14px">'+title+'</h1><p class="muted" style="margin-top:8px;font-size:14px" role="status">'+esc(sub)+'</p></div>'+
+   '<div class="pdots" aria-label="'+V.pinBuf.length+' of 4 digits entered">'+dots+'</div>'+
+   '<div class="keys">'+keys+'</div><div>'+foot+'</div></main>';
+}
+
+function vWelcome(){
+  return '<main style="padding-top:34px">'+
+   '<div class="row gap12"><svg class="mark" viewBox="0 0 44 44" fill="none" stroke="var(--sand)" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="19" opacity=".35"/><circle cx="22" cy="22" r="12.5" opacity=".65"/><circle cx="22" cy="22" r="6" fill="var(--sand)" stroke="none"/></svg><span class="display" style="font-size:22px">Stillwater</span></div>'+
+   '<h1 style="font-size:42px;line-height:1.1;margin-top:32px">You are not<br>your urges.</h1>'+
+   '<p class="muted" style="font-size:16px;line-height:1.55;margin-top:16px">Stillwater helps you ride out the pull, notice what drives it, and build days you are proud of. Quietly, privately, at your own pace.</p>'+
+   '<div class="eyebrow" style="margin-top:30px">What are you fighting for?</div>'+
+   '<div class="chips" style="margin-top:14px">'+REASONS.map(function(r){
+      var on=S.reasons.indexOf(r[0])>-1;
+      return '<button class="chip" aria-pressed="'+on+'" data-a="reason" data-v="'+r[0]+'">'+(on?ic('check',14,3):'')+r[1]+'</button>';
+   }).join('')+'</div>'+
+   '<div style="margin-top:auto;padding-top:28px">'+
+   '<button class="btn primary" data-a="begin">Begin day one</button>'+
+   '<p class="row gap8" style="justify-content:center;margin-top:14px;font-size:12px;color:var(--dim);text-align:center">'+ic('lock',14,2)+'Everything stays on this device. Nothing is sent anywhere.</p>'+
+   '<div style="text-align:center"><button class="linkbtn" data-a="demo">Preview with sample data</button></div>'+
+   '</div></main>';
+}
+
+/* ---------- home ---------- */
+function vHome(){
+  var n=streak(),next=null,i,d=today();
+  for(i=0;i<MILES.length;i++){if(MILES[i][0]>n){next=MILES[i];break;}}
+  var C=2*Math.PI*92,frac=next?Math.min(1,n/next[0]):1;
+  var hr=d.getHours(),greet=hr<12?'Good morning':(hr<18?'Good afternoon':'Good evening');
+  var dateStr=WD[d.getDay()].toUpperCase()+' · '+d.getDate()+' '+MON[d.getMonth()].toUpperCase();
+  var sub;
+  if(next){var left=next[0]-n;sub=(left===1?'One more day':left+' more days')+' to your <b style="color:var(--fg)">'+next[1]+'</b>';}
+  else sub='Every milestone reached. Keep going.';
+  var wk='';
+  for(i=6;i>=0;i--){
+    var dd=new Date(d.getFullYear(),d.getMonth(),d.getDate()-i),st=dayState(dd);
+    var inner=st==='free'?ic('check',16,2.6):'';
+    var lbl={free:'free',today:'today',slip:'slip',none:'no record',future:''}[st];
+    wk+='<div class="wd"><span aria-hidden="true">'+WD[dd.getDay()].charAt(0)+'</span><div class="dot '+st+'" role="img" aria-label="'+WD[dd.getDay()]+', '+lbl+'">'+inner+'</div></div>';
+  }
+  var mile=null;MILES.forEach(function(m){if(m[0]===n&&S.seenMile!==n)mile=m;});
+  var banner=mile?'<section class="card row gap12" style="margin-top:16px;background:var(--sage-bg);border-color:var(--sage);padding:14px 18px"><div style="flex:1;min-width:0"><b style="display:block;font-size:15px;color:var(--sage)">You reached your '+mile[1]+'</b><span style="font-size:13px;color:var(--fg)">That is '+n+(n===1?' day':' days')+' of choosing differently.</span></div><button class="chip sage" aria-pressed="true" data-a="mileSeen" data-v="'+n+'">Thanks</button></section>':'';
+  var rec=todayRec(),note='Pick what fits. Naming it makes it easier to see your patterns.';
+  MOODS.forEach(function(m){if(m[0]===rec.mood)note=m[2];});
+  var pd=!!S.pledges[ymd(d)];
+  var pledge='<section class="card row gap12" style="margin-top:14px;padding:14px 18px"><div style="flex:1;min-width:0"><b style="display:block;font-size:15px">Today\'s pledge</b><span class="muted" style="font-size:13px">'+(pd?'Made. Protect your evening.':'I choose a clear mind today.')+'</span></div>'+(pd?'<span class="chip sage" aria-pressed="true" style="cursor:default">'+ic('check',14,3)+'Made</span>':'<button class="chip" data-a="pledge">I pledge</button>')+'</section>';
+  var evening=(hr>=18&&!(rec.note||(rec.triggers&&rec.triggers.length)))?'<section class="card row gap12" style="margin-top:14px;padding:14px 18px"><div style="flex:1;min-width:0"><b style="display:block;font-size:15px">Close out the day</b><span class="muted" style="font-size:13px">A one-minute reflection keeps your patterns clear.</span></div><button class="chip" data-a="tab" data-v="reflect">Reflect</button></section>':'';
+  return '<main>'+
+   '<div class="row between"><div><div class="eyebrow">'+dateStr+'</div><h1 style="font-size:27px;line-height:1.2;margin-top:3px">'+greet+'</h1></div>'+
+   '<button class="icon-btn" aria-label="Settings" data-a="settings">'+ic('set',20)+'</button></div>'+
+   '<div class="ringwrap" style="margin-top:14px"><svg width="208" height="208" viewBox="0 0 208 208" fill="none" aria-hidden="true"><circle cx="104" cy="104" r="92" stroke="var(--surface2)" stroke-width="12"/><circle cx="104" cy="104" r="92" stroke="var(--sand)" stroke-width="12" stroke-linecap="round" stroke-dasharray="'+(frac*C).toFixed(1)+' '+C.toFixed(1)+'"/></svg>'+
+   '<div class="ringnum"><b>'+n+'</b><span class="eyebrow" style="letter-spacing:.16em;margin-top:8px;color:var(--muted)">'+(n===1?'day free':'days free')+'</span></div></div>'+
+   '<p class="muted" style="text-align:center;margin-top:12px">'+sub+'</p>'+
+   '<div class="week">'+wk+'</div>'+
+   banner+
+   '<div style="margin-top:18px"><button class="btn primary" data-a="tab" data-v="rescue">'+ic('rescue',22,2)+'I\'m feeling an urge</button>'+
+   '<p style="text-align:center;margin-top:10px;font-size:12px;color:var(--dim)">Two minutes. No judgment. You are not alone.</p></div>'+
+   '<section class="card" style="margin-top:18px"><h2 class="display" style="font-size:19px;line-height:1.25">How are you arriving today?</h2>'+
+   '<div class="chips" style="margin-top:14px">'+MOODS.map(function(m){return '<button class="chip" aria-pressed="'+(rec.mood===m[0])+'" data-a="mood" data-v="'+m[0]+'">'+m[1]+'</button>';}).join('')+'</div>'+
+   '<p class="muted" style="margin-top:14px;font-size:13px" aria-live="polite">'+note+'</p></section>'+
+   pledge+evening+
+   '</main>';
+}
+
+/* ---------- progress ---------- */
+function calHTML(){
+  var base=new Date(today().getFullYear(),today().getMonth()+V.calOff,1);
+  var lead=(base.getDay()+6)%7,dim=new Date(base.getFullYear(),base.getMonth()+1,0).getDate(),h='',i;
+  ['M','T','W','T','F','S','S'].forEach(function(w){h+='<div class="dw" aria-hidden="true">'+w+'</div>';});
+  for(i=0;i<lead;i++)h+='<div></div>';
+  for(i=1;i<=dim;i++){var st=dayState(new Date(base.getFullYear(),base.getMonth(),i));h+='<div class="cd '+st+'">'+i+'</div>';}
+  return {title:MONL[base.getMonth()]+' '+base.getFullYear(),html:h,date:base};
+}
+function triggerCounts(){
+  var c={};
+  S.urges.forEach(function(u){if(u.trigger)c[u.trigger]=(c[u.trigger]||0)+1;});
+  Object.keys(S.checkins).forEach(function(k){(S.checkins[k].triggers||[]).forEach(function(t){c[t]=(c[t]||0)+1;});});
+  return Object.keys(c).map(function(k){return [k,c[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,5);
+}
+function hourBuckets(){
+  var b=[0,0,0,0];
+  S.urges.forEach(function(u){var h=new Date(u.t).getHours();b[(h>=5&&h<11)?0:(h>=11&&h<17)?1:(h>=17&&h<22)?2:3]++;});
+  return b;
+}
+function barsHTML(rows,max){
+  return rows.map(function(t){return '<div class="bar"><div class="lb">'+esc(t[0])+'</div><div class="tr"><i style="width:'+(max?Math.round(t[1]/max*100):0)+'%"></i></div><div class="vl">'+t[1]+'</div></div>';}).join('');
+}
+function vProgress(){
+  var cal=calHTML(),n=streak(),tc=triggerCounts(),max=tc.length?tc[0][1]:1;
+  var first=S.firstDay?new Date(S.firstDay+'T00:00:00'):today();
+  var canPrev=(cal.date.getFullYear()*12+cal.date.getMonth())>(first.getFullYear()*12+first.getMonth());
+  var canNext=V.calOff<0;
+  var bars=tc.length?barsHTML(tc.map(function(t){return [label(TRIGS,t[0]),t[1]];}),max):'<p class="muted" style="font-size:13.5px;margin-top:10px">Log an urge or an evening reflection and your patterns show up here.</p>';
+  var ms=MILES.map(function(m){var done=n>=m[0];return '<span class="chip sage" aria-pressed="'+done+'" style="min-height:36px;cursor:default;font-size:12.5px">'+(done?ic('check',13,3):'')+m[0]+(m[0]===1?' day':' days')+'</span>';}).join('');
+  var hb=hourBuckets(),hmax=Math.max.apply(null,hb);
+  var when=S.urges.length?'<section class="card" style="margin-top:14px;padding:16px"><h2 class="display" style="font-size:18px">When urges hit</h2><div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">'+barsHTML(BUCKETS.map(function(b,i){return [b,hb[i]];}),hmax)+'</div></section>':'';
+  var pairs=S.urges.filter(function(u){return u.before&&u.after;});
+  var fade='';
+  if(pairs.length){
+    var ab=0,aa=0,ts=0;pairs.forEach(function(u){ab+=u.before;aa+=u.after;ts+=(u.secs||0);});
+    fade='<section class="card" style="margin-top:14px;padding:16px"><h2 class="display" style="font-size:18px">Urges fade</h2><p class="muted" style="margin-top:8px;font-size:14px">Across '+pairs.length+' urges you rated, the average strength went from <b style="color:var(--fg)">'+(ab/pairs.length).toFixed(1)+'</b> to <b style="color:var(--sage)">'+(aa/pairs.length).toFixed(1)+'</b> out of 10, after about <b style="color:var(--fg)">'+Math.max(1,Math.round(ts/pairs.length/60))+' min</b> each.</p></section>';
+  }
+  var pc=Object.keys(S.pledges).length;
+  return '<main>'+
+   '<h1 style="font-size:32px;line-height:1.15">Progress</h1>'+
+   '<p class="muted" style="font-size:13.5px;margin-top:4px">Slips happen. What matters is the way back.</p>'+
+   '<div class="stats" style="margin-top:16px"><div class="stat"><b style="color:var(--sand)">'+n+'</b><span>Current streak</span></div><div class="stat"><b>'+longest()+'</b><span>Longest streak</span></div><div class="stat"><b style="color:var(--sage)">'+S.urges.length+'</b><span>Urges ridden out</span></div></div>'+
+   '<section class="card" style="margin-top:14px;padding:16px"><div class="row between"><button class="icon-btn" aria-label="Previous month" data-a="cal" data-v="-1"'+(canPrev?'':' disabled')+'>'+ic('prev',18,2)+'</button>'+
+   '<h2 class="display" style="font-size:18px">'+cal.title+'</h2>'+
+   '<button class="icon-btn" aria-label="Next month" data-a="cal" data-v="1"'+(canNext?'':' disabled')+'>'+ic('next',18,2)+'</button></div>'+
+   '<div class="cal" style="margin-top:10px">'+cal.html+'</div>'+
+   '<div class="row gap12" style="margin-top:12px;font-size:11.5px;font-weight:600;color:var(--muted)"><span class="row gap8"><i style="width:10px;height:10px;border-radius:50%;background:var(--sage);display:inline-block"></i>Free</span><span class="row gap8"><i style="width:10px;height:10px;border-radius:50%;border:1.5px dashed var(--muted);display:inline-block"></i>Slip</span></div></section>'+
+   fade+
+   '<section class="card" style="margin-top:14px;padding:16px"><h2 class="display" style="font-size:18px">What sets off your urges</h2><div style="display:flex;flex-direction:column;gap:6px;margin-top:10px">'+bars+'</div></section>'+
+   when+
+   '<section class="card" style="margin-top:14px;padding:16px"><h2 class="display" style="font-size:18px">Milestones</h2><div class="chips" style="margin-top:12px">'+ms+'</div>'+(pc?'<p class="muted" style="font-size:13px;margin-top:12px">You have made '+pc+(pc===1?' daily pledge.':' daily pledges.')+'</p>':'')+'</section>'+
+   '</main>';
+}
+
+/* ---------- reflect ---------- */
+function ensureDraft(){
+  if(V.draft)return;
+  var r=todayRec();
+  V.draft={triggers:(r.triggers||[]).slice(),energy:r.energy||3,note:r.note||''};
+  V.saved=!!(r.note||(r.triggers&&r.triggers.length));
+}
+function vReflect(){
+  ensureDraft();
+  var D=V.draft,d=today();
+  var keys=Object.keys(S.checkins).filter(function(k){var r=S.checkins[k];return (r.note||(r.triggers&&r.triggers.length))&&k!==ymd(d);}).sort().reverse().slice(0,5);
+  var past=keys.length?'<section class="card" style="margin-top:20px;padding:6px 18px"><div class="eyebrow" style="padding-top:14px">Earlier</div>'+keys.map(function(k){
+    var r=S.checkins[k],dd=new Date(k+'T00:00:00');
+    return '<div class="entry"><small>'+WD[dd.getDay()].slice(0,3).toUpperCase()+' '+dd.getDate()+' '+MON[dd.getMonth()].toUpperCase()+(r.energy?' · ENERGY '+r.energy+'/5':'')+'</small>'+
+      ((r.triggers&&r.triggers.length)?'<div class="muted" style="font-size:13px;margin-top:4px">'+r.triggers.map(function(t){return esc(label(TRIGS,t));}).join(' · ')+'</div>':'')+
+      (r.note?'<p style="margin-top:6px;overflow-wrap:anywhere">'+esc(r.note)+'</p>':'')+'</div>';
+  }).join('')+'</section>':'';
+  return '<main>'+
+   '<div class="eyebrow">'+WD[d.getDay()]+' · '+d.getDate()+' '+MON[d.getMonth()]+'</div>'+
+   '<h1 style="font-size:32px;line-height:1.15;margin-top:3px">Evening reflection</h1>'+
+   '<h2 style="font-size:15px;margin-top:22px">What pulled at you today?</h2>'+
+   '<div class="chips" style="margin-top:12px">'+TRIGS.map(function(t){return '<button class="chip" aria-pressed="'+(D.triggers.indexOf(t[0])>-1)+'" data-a="trig" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
+   '<h2 style="font-size:15px;margin-top:24px">How is your energy?</h2>'+
+   '<div class="row between" style="margin-top:12px">'+[1,2,3,4,5].map(function(n){return '<button class="chip sage" style="width:52px;height:52px;border-radius:50%;padding:0;justify-content:center;font-size:16px" aria-label="Energy '+n+' of 5" aria-pressed="'+(D.energy===n)+'" data-a="energy" data-v="'+n+'">'+n+'</button>';}).join('')+'</div>'+
+   '<div class="row between muted" style="margin-top:8px;font-size:12px;font-weight:600"><span>Drained</span><span>Charged</span></div>'+
+   '<label for="note" style="display:block;font-size:15px;font-weight:700;margin-top:24px">One honest line about today</label>'+
+   '<textarea id="note" placeholder="I noticed the pull at 10 pm, and I put my phone in the kitchen.">'+esc(D.note)+'</textarea>'+
+   '<div id="savebtn" style="margin-top:20px">'+(V.saved?'<div class="btn done" role="status">'+ic('check',20,2.5)+'Saved. You showed up today.</div>':'<button class="btn primary" data-a="saveReflect">Save today\'s reflection</button>')+'</div>'+
+   past+'</main>';
+}
+
+/* ---------- toolkit ---------- */
+function vKit(){
+  var gc=GUARDS.filter(function(g){return S.guards[g[0]];}).length;
+  var plans=S.plans.length?S.plans.map(function(p,i){
+    return '<div class="listrow"><div style="flex:1;min-width:0"><div class="eyebrow">When '+esc(label(TRIGS,p.trigger).toLowerCase())+'</div><div style="margin-top:2px;overflow-wrap:anywhere">I will '+esc(p.text)+'</div></div><button class="icon-btn" aria-label="Delete plan" data-a="planDel" data-v="'+i+'">'+ic('x',16,2)+'</button></div>';
+  }).join(''):'<p class="muted" style="font-size:13.5px">No plans yet. Decide now what you will do when a trigger hits, while you feel strong.</p>';
+  var sugg=STARTERS.map(function(s,i){return [s,i];}).filter(function(x){return !S.plans.some(function(p){return p.trigger===x[0][0]&&p.text===x[0][1];});}).slice(0,3).map(function(x){
+    return '<button class="rowbtn" data-a="planStarter" data-v="'+x[1]+'"><span style="color:var(--sand);flex:none">'+ic('plus',20,2)+'</span><span class="muted" style="font-weight:600;font-size:13.5px">When '+esc(label(TRIGS,x[0][0]).toLowerCase())+', I will '+esc(x[0][1])+'</span></button>';
+  }).join('');
+  var guards=GUARDS.map(function(g){var on=!!S.guards[g[0]];return '<button class="rowbtn" aria-pressed="'+on+'" data-a="guard" data-v="'+g[0]+'"><span class="cb'+(on?' on':'')+'">'+(on?ic('check',16,3):'')+'</span><span>'+g[1]+'</span></button>';}).join('');
+  return '<main>'+
+   '<h1 style="font-size:32px;line-height:1.15">Toolkit</h1>'+
+   '<p class="muted" style="font-size:13.5px;margin-top:4px">Set these up while you feel strong. They carry you when you do not.</p>'+
+   '<section class="card" style="margin-top:16px"><h2 class="display" style="font-size:19px">If-then plans</h2><div style="margin-top:12px">'+plans+'</div>'+
+   (sugg?'<div class="eyebrow" style="margin-top:14px">Quick add</div><div style="margin-top:4px">'+sugg+'</div>':'')+
+   '<div class="eyebrow" style="margin-top:16px">Write your own</div><div class="chips" style="margin-top:10px">'+TRIGS.map(function(t){return '<button class="chip" aria-pressed="'+(V.planTrig===t[0])+'" data-a="planTrig" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
+   '<label class="lbl" for="plantext" style="margin-top:14px">I will</label><input id="plantext" class="field" type="text" maxlength="120" placeholder="take a cold shower" value="'+esc(V.planText)+'">'+
+   '<button class="btn primary" style="margin-top:12px;min-height:48px;font-size:15px" data-a="planAdd">Add plan</button></section>'+
+   '<section class="card" style="margin-top:14px"><div class="row between"><h2 class="display" style="font-size:19px">Safeguards</h2><span class="muted mono" style="font-size:13px">'+gc+' of '+GUARDS.length+'</span></div><div style="margin-top:8px">'+guards+'</div></section>'+
+   '<section class="card" style="margin-top:14px"><h2 class="display" style="font-size:19px">Someone I trust</h2>'+
+   '<p class="muted" style="font-size:13px;margin-top:6px">Shown in Rescue so they are one step away. Stillwater never contacts anyone for you.</p>'+
+   '<label class="lbl" for="cname" style="margin-top:12px">Name</label><input id="cname" class="field" type="text" maxlength="40" autocomplete="off" placeholder="Sam" value="'+esc(S.contact.name)+'">'+
+   '<label class="lbl" for="cnum" style="margin-top:12px">Phone number or handle</label><input id="cnum" class="field" type="text" maxlength="40" autocomplete="off" placeholder="+673 555 0123" value="'+esc(S.contact.num)+'"></section>'+
+   '<section class="card" style="margin-top:14px"><h2 class="display" style="font-size:19px">A note to myself</h2>'+
+   '<label for="letter" class="muted" style="display:block;font-size:13px;margin-top:6px">Write to the version of you who is struggling. It appears in Rescue.</label>'+
+   '<textarea id="letter" style="height:120px" placeholder="Remember why you started. The pull will pass, and you will be glad you waited.">'+esc(S.letter)+'</textarea></section>'+
+   '</main>';
+}
+
+/* ---------- rescue ---------- */
+function rhead(){return '<div class="row between"><button class="icon-btn" aria-label="Close" data-a="rescueClose">'+ic('x',18,2)+'</button><span class="eyebrow">Urge rescue</span><span style="width:44px"></span></div>';}
+function vRescue(){
+  if(V.stage==='start'){
+    return '<main>'+rhead()+
+     '<h1 style="font-size:34px;line-height:1.1;margin-top:18px">This will pass.</h1>'+
+     '<p class="muted" style="font-size:14.5px;margin-top:8px">An urge is a wave. It rises, peaks, and falls. You do not have to act on it.</p>'+
+     '<h2 style="font-size:17px;margin-top:30px">How strong is it right now?</h2>'+
+     '<p class="muted" style="font-size:13px;margin:4px 0 16px">Tap a number to begin. You will rate it again at the end, so you can see it fall.</p>'+
+     nums(null,'rStart')+
+     '<div style="margin-top:auto;text-align:center;padding-top:20px"><button class="linkbtn" data-a="rStart" data-v="0">Skip the rating</button></div></main>';
+  }
+  if(V.stage==='after'){
+    return '<main>'+rhead()+
+     '<h1 style="font-size:34px;line-height:1.1;margin-top:18px">You rode it out.</h1>'+
+     '<p class="muted" style="margin-top:8px">You stayed with it for '+mmss(V.rSecs)+(V.rBefore?' and started at '+V.rBefore+' out of 10':'')+'.</p>'+
+     '<h2 style="font-size:17px;margin-top:26px">How strong is it now?</h2><div style="margin-top:14px">'+nums(V.rAfter,'rAfter')+'</div>'+
+     '<h2 style="font-size:17px;margin-top:26px">What set it off?</h2>'+
+     '<div class="chips" style="margin-top:12px">'+TRIGS.map(function(t){return '<button class="chip" aria-pressed="'+(V.rTrig===t[0])+'" data-a="rTrig" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</div>'+
+     '<div class="dock"><button class="btn primary" data-a="rescueSave">Log this urge</button><div style="text-align:center"><button class="linkbtn" data-a="rescueSkip">Skip</button></div></div></main>';
+  }
+  var tools=[['breathe','Breathe'],['ground','Ground'],['move','Move'],['why','My why']],panel='',c=S.contact;
+  var strip='<div class="card" style="padding:12px 16px;margin-top:14px"><div class="row between"><span class="eyebrow">Riding it</span><b id="rt" class="mono" style="font-size:15px">0:00</b></div><div style="height:6px;border-radius:3px;background:var(--surface2);margin-top:10px"><i id="rfill" style="display:block;height:6px;border-radius:3px;background:var(--sand);width:0"></i></div><p id="rmsg" class="muted" style="font-size:12.5px;margin-top:8px">Aim for two minutes. Urges rise and fall.</p></div>';
+  var seg='<div class="seg" role="group" aria-label="Rescue tools" style="margin-top:12px">'+tools.map(function(t){return '<button data-a="rTool" data-v="'+t[0]+'" aria-pressed="'+(V.rTool===t[0])+'">'+t[1]+'</button>';}).join('')+'</div>';
+  if(V.rTool==='breathe'){
+    panel='<div style="text-align:center;padding-top:10px"><div class="orbwrap"><div class="orb" id="orb"><i class="o1"></i><i class="o2"></i><i class="o3"></i></div></div>'+
+     '<div class="display" id="bcue" style="font-size:26px;margin-top:8px">Breathe in</div><div id="bcount" class="mono" style="font-size:15px;color:var(--sand);margin-top:2px">4</div>'+
+     '<p class="muted" style="font-size:13px;margin-top:8px">In 4, hold 4, out 4, hold 4. Let thoughts pass without following them.</p></div>';
+  }else if(V.rTool==='ground'){
+    if(V.gStep>=GROUND.length){
+      panel='<div style="text-align:center;padding-top:22px"><div class="display" style="font-size:26px">You are here.</div><p class="muted" style="margin-top:8px;font-size:14.5px">In this room, in your body, in this moment. The urge is smaller than it was.</p><button class="linkbtn" data-a="gReset" style="margin-top:12px">Go through it again</button></div>';
+    }else{
+      var g=GROUND[V.gStep],dots='';GROUND.forEach(function(x,i){dots+='<i style="width:8px;height:8px;border-radius:50%;display:inline-block;background:'+(i<=V.gStep?'var(--sand)':'var(--line2)')+'"></i>';});
+      panel='<div style="text-align:center;padding-top:16px"><div class="display" style="font-size:68px;line-height:1;color:var(--sand)">'+g[0]+'</div><h2 style="font-size:19px;margin-top:6px">'+g[1]+'</h2><p class="muted" style="font-size:14px;margin-top:6px">'+g[2]+'</p>'+
+       '<div class="row gap8" style="justify-content:center;margin-top:16px" aria-hidden="true">'+dots+'</div>'+
+       '<button class="btn ghost" style="margin-top:16px" data-a="gNext">'+(V.gStep===GROUND.length-1?'Finish':'I named them')+'</button></div>';
+    }
+  }else if(V.rTool==='move'){
+    panel='<div class="card" style="margin-top:12px;padding:8px 18px"><p class="muted" style="font-size:13px;padding-top:10px">Change your body and the wave changes. Pick one.</p>'+MOVES.map(function(m,i){var on=!!V.mDone[i];return '<button class="rowbtn" aria-pressed="'+on+'" data-a="mTog" data-v="'+i+'"><span class="cb'+(on?' on':'')+'">'+(on?ic('check',16,3):'')+'</span><span>'+m+'</span></button>';}).join('')+'</div>';
+  }else{
+    var why=S.reasons.map(function(r){return '<span class="chip" aria-pressed="true" style="cursor:default;min-height:36px;font-size:13px">'+esc(label(REASONS,r))+'</span>';}).join('');
+    panel='<div style="padding-top:12px">'+(why?'<div class="eyebrow">I am doing this for</div><div class="chips" style="margin-top:10px">'+why+'</div>':'')+
+     '<div class="card" style="margin-top:14px;padding:14px 18px"><div class="eyebrow">A note from me</div>'+(S.letter?'<p style="margin-top:8px;overflow-wrap:anywhere;white-space:pre-wrap;font-family:var(--display);font-size:17px;line-height:1.4">'+esc(S.letter)+'</p>':'<p class="muted" style="font-size:13.5px;margin-top:8px">You have not written one yet. Write it in Toolkit when you feel strong, and it will be here for you.</p><button class="linkbtn" style="padding-left:0" data-a="goKit">Open Toolkit</button>')+'</div>'+
+     '<div class="card" style="margin-top:12px;padding:14px 18px"><div class="eyebrow">Someone I trust</div>'+(c.name?'<div style="margin-top:6px;font-size:16px;font-weight:700">'+esc(c.name)+'</div>'+(c.num?'<div class="mono muted" style="font-size:14px;margin-top:2px;overflow-wrap:anywhere">'+esc(c.num)+'</div>':''):'<p class="muted" style="font-size:13.5px;margin-top:6px">Add a name in Toolkit so they are one step away.</p>')+'</div></div>';
+  }
+  var msgBtn='<button class="btn ghost" style="margin-top:8px" data-a="helpMsg">'+ic('chat',18)+(c.name?'Copy a message for '+esc(c.name):'Copy a message for someone I trust')+'</button>';
+  return '<main>'+rhead()+strip+seg+'<div>'+panel+'</div>'+
+   '<div class="dock"><button class="btn primary" data-a="rescueDone">I got through it</button>'+msgBtn+'<div style="text-align:center"><button class="linkbtn" data-a="slipOpen">I slipped</button></div></div></main>';
+}
+
+/* ---------- modals ---------- */
+function modalHTML(){
+  if(V.modal==='slip'){
+    return '<div class="scrim" data-a="closeModal" data-bg="1"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">'+
+     '<h2 id="mt" class="display" style="font-size:24px">Log a slip?</h2>'+
+     '<p class="muted" style="margin-top:8px">Your streak goes back to day one. Your longest streak and every day you have logged stay in your history. One slip does not undo your progress.</p>'+
+     '<div style="margin-top:20px"><button class="btn primary" data-a="slipConfirm">Log it and start again</button><button class="btn ghost" style="margin-top:8px" data-a="closeModal">Cancel</button></div></div></div>';
+  }
+  if(V.modal==='settings'){
+    var pinBtn=S.pin?'<button class="btn ghost" data-a="pinOff">'+ic('lock',18)+'Turn off PIN lock</button>':'<button class="btn ghost" data-a="pinSet">'+ic('lock',18)+'Set a PIN lock</button>';
+    var restore=V.restoreOpen?'<label class="lbl" for="restoretext" style="margin-top:6px">Paste your copied data</label><textarea id="restoretext" class="mono" style="height:110px;font-size:12px;margin-top:0">'+esc(V.restoreText)+'</textarea><button class="btn ghost" data-a="restoreNow">Restore now</button>':'<button class="btn ghost" data-a="restoreOpen">Restore from copied data</button>';
+    return '<div class="scrim" data-a="closeModal" data-bg="1"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mt">'+
+     '<div class="row between"><h2 id="mt" class="display" style="font-size:24px">Settings</h2><button class="icon-btn" aria-label="Close settings" data-a="closeModal">'+ic('x',18,2)+'</button></div>'+
+     '<div class="eyebrow" style="margin-top:18px">Your why</div>'+
+     '<div class="chips" style="margin-top:12px">'+REASONS.map(function(r){return '<button class="chip" aria-pressed="'+(S.reasons.indexOf(r[0])>-1)+'" data-a="reason" data-v="'+r[0]+'">'+r[1]+'</button>';}).join('')+'</div>'+
+     '<p class="row gap8 muted" style="margin-top:20px;font-size:13px;align-items:flex-start"><span style="flex:none;margin-top:2px">'+ic('lock',16,2)+'</span><span>Everything you log stays in this browser on this device. Nothing is sent anywhere. Clearing site data removes it, so copy your data now and then.</span></p>'+
+     '<div style="margin-top:18px;display:flex;flex-direction:column;gap:8px">'+pinBtn+
+     '<button class="btn ghost" data-a="slipOpen">Log a slip</button>'+
+     '<button class="btn ghost" data-a="copyData">'+ic('copy',18)+'Copy my data</button>'+
+     (V.dataText?'<textarea id="datatext" readonly aria-label="Your data" class="mono" style="height:120px;font-size:12px;margin-top:0">'+esc(V.dataText)+'</textarea>':'')+
+     restore+
+     (V.erase?'<button class="btn ghost" style="border-color:var(--sand);color:var(--sand)" data-a="eraseConfirm">Tap again to erase everything</button>':'<button class="btn ghost" data-a="erase">Erase all data</button>')+
+     '</div></div></div>';
+  }
+  return '';
+}
+
+/* ---------- render ---------- */
+function render(){
+  var app=document.getElementById('app'),h,m=app.querySelector('main'),keep=m?m.scrollTop:0;
+  var sig=V.tab+'|'+V.stage+'|'+V.rTool+'|'+(V.pinFlow||'')+'|'+(S.onboarded?1:0);
+  if(V.pinFlow){h=vPin();}
+  else if(!S.onboarded){h=vWelcome();}
+  else if(V.tab==='rescue'){h=vRescue();}
+  else{h=(V.tab==='progress'?vProgress():V.tab==='reflect'?vReflect():V.tab==='kit'?vKit():vHome())+tabbar();}
+  if(!V.pinFlow)h+=modalHTML();
+  if(V.toast)h+='<div class="toast" role="status">'+esc(V.toast)+'</div>';
+  app.innerHTML=h;
+  var m2=app.querySelector('main');if(m2&&sig===lastSig&&keep)m2.scrollTop=keep;
+  lastSig=sig;lastPhase=-1;
+  if(!V.pinFlow&&S.onboarded&&V.tab==='rescue'&&V.stage==='active')startTimer();else stopTimer();
+}
+function tick(){
+  var el=Date.now()-V.rStart,s=Math.max(0,Math.floor(el/1000)),e;
+  e=document.getElementById('rt');if(e)e.textContent=mmss(s);
+  e=document.getElementById('rfill');if(e)e.style.width=Math.min(100,el/(HOLD*10))+'%';
+  e=document.getElementById('rmsg');
+  if(e){var t=s>=HOLD?'Two minutes done. Well done. Stay as long as you need.':'Aim for two minutes. Urges rise and fall.';if(e.textContent!==t)e.textContent=t;}
+  var orb=document.getElementById('orb');
+  if(orb){
+    var p=Math.floor(s/4)%4;
+    if(p!==lastPhase){
+      lastPhase=p;
+      void orb.offsetWidth;
+      orb.style.transition=(RM||p===1||p===3)?'none':'transform 4s ease-in-out';
+      orb.style.transform='scale('+((p===0||p===1)?1:.72)+')';
+    }
+    e=document.getElementById('bcue');if(e)e.textContent=PHASES[p];
+    e=document.getElementById('bcount');if(e)e.textContent=4-(s%4);
+  }
+}
+function startTimer(){stopTimer();lastPhase=-1;tick();timer=setInterval(tick,250);}
+function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+
+/* ---------- actions ---------- */
+function copyText(text,ok,fail){
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fail);}else fail();}catch(e){fail();}
+}
+function resetRescue(){V.stage='start';V.rBefore=null;V.rAfter=null;V.rTrig=null;V.rTool='breathe';V.gStep=0;V.mDone={};V.rSecs=0;}
+function demo(){
+  var now=new Date(),at=function(daysAgo,hr){return new Date(now.getFullYear(),now.getMonth(),now.getDate()-daysAgo,hr==null?9:hr,0,0);};
+  var keepPin=S.pin;
+  S=defaults();S.pin=keepPin;S.onboarded=true;S.reasons=['relationships','focus'];
+  S.firstDay=ymd(at(24));S.slips=[ymd(at(13))];S.started=at(12).getTime();S.longest=11;
+  [[1,23,'late',7,3,540],[2,22,'late',8,4,600],[3,15,'bored',5,2,420],[4,23,'alone',9,4,780],[6,21,'stress',6,3,360],[7,23,'late',7,2,480],[8,14,'bored',5,2,300],[9,22,'social',8,5,660],[11,19,'stress',6,3,400],[15,23,'late',9,5,720],[17,10,'bored',4,2,240],[19,22,'lonely',7,3,520]].forEach(function(u){
+    S.urges.push({t:at(u[0],u[1]).getTime(),trigger:u[2],before:u[3],after:u[4],secs:u[5]});
+  });
+  S.checkins[ymd(at(1))]={mood:'calm',triggers:['late'],energy:4,note:'Noticed the pull at 10 pm and put my phone in the kitchen.'};
+  S.checkins[ymd(at(2))]={mood:'tired',triggers:['bored','alone'],energy:2,note:'Long day. Went for a walk instead of scrolling.'};
+  S.checkins[ymd(at(3))]={mood:'stressed',triggers:['stress'],energy:3,note:'Called my brother when it got hard.'};
+  S.pledges[ymd(at(1))]=true;S.pledges[ymd(at(2))]=true;S.pledges[ymd(at(3))]=true;
+  S.plans=[{trigger:'late',text:'put my phone in the kitchen and get into bed'}];
+  S.guards={phone:true,block:true};
+  S.letter='You have done twelve days. Do not trade them for ten minutes. Breathe, stand up, and go be around people.';
+  save();V.tab='home';V.draft=null;render();
+}
+function act(a,v){
+  var i;
+  switch(a){
+    case 'reason':
+      i=S.reasons.indexOf(v);if(i>-1)S.reasons.splice(i,1);else S.reasons.push(v);save();render();break;
+    case 'begin':
+      S.onboarded=true;S.started=Date.now();S.firstDay=ymd(today());save();V.tab='home';render();break;
+    case 'demo':demo();break;
+    case 'tab':
+      if(v==='rescue')resetRescue();
+      if(v==='reflect')V.draft=null;
+      V.tab=v;V.modal=null;render();break;
+    case 'goKit':V.tab='kit';render();break;
+    case 'settings':V.modal='settings';V.erase=false;V.dataText='';V.restoreOpen=false;render();break;
+    case 'closeModal':V.modal=null;V.erase=false;V.dataText='';V.restoreOpen=false;render();break;
+    case 'mood':{var k=ymd(today()),r=S.checkins[k]||{};r.mood=v;S.checkins[k]=r;save();render();break;}
+    case 'pledge':S.pledges[ymd(today())]=true;save();render();break;
+    case 'mileSeen':S.seenMile=parseInt(v,10)||0;save();render();break;
+    case 'cal':V.calOff+=parseInt(v,10);if(V.calOff>0)V.calOff=0;render();break;
+    case 'trig':
+      i=V.draft.triggers.indexOf(v);if(i>-1)V.draft.triggers.splice(i,1);else V.draft.triggers.push(v);V.saved=false;render();break;
+    case 'energy':V.draft.energy=parseInt(v,10);V.saved=false;render();break;
+    case 'saveReflect':{
+      var kk=ymd(today()),rr=S.checkins[kk]||{};
+      rr.triggers=V.draft.triggers.slice();rr.energy=V.draft.energy;rr.note=V.draft.note.trim();
+      S.checkins[kk]=rr;save();V.saved=true;render();break;}
+    /* toolkit */
+    case 'planTrig':V.planTrig=(V.planTrig===v?null:v);render();break;
+    case 'planAdd':{
+      var txt=V.planText.trim();
+      if(!V.planTrig){toast('Pick a trigger first.');break;}
+      if(!txt){toast('Write what you will do.');break;}
+      S.plans.push({trigger:V.planTrig,text:txt});V.planText='';V.planTrig=null;save();toast('Plan added.');break;}
+    case 'planStarter':{var st=STARTERS[parseInt(v,10)];if(st){S.plans.push({trigger:st[0],text:st[1]});save();render();}break;}
+    case 'planDel':S.plans.splice(parseInt(v,10),1);save();render();break;
+    case 'guard':S.guards[v]=!S.guards[v];save();render();break;
+    /* rescue */
+    case 'rescueClose':V.tab='home';render();break;
+    case 'rStart':V.rBefore=parseInt(v,10)||null;V.stage='active';V.rTool='breathe';V.rStart=Date.now();render();break;
+    case 'rTool':V.rTool=v;render();break;
+    case 'gNext':V.gStep++;render();break;
+    case 'gReset':V.gStep=0;render();break;
+    case 'mTog':V.mDone[v]=!V.mDone[v];render();break;
+    case 'rescueDone':V.rSecs=Math.floor((Date.now()-V.rStart)/1000);V.stage='after';render();break;
+    case 'rAfter':V.rAfter=parseInt(v,10);render();break;
+    case 'rTrig':V.rTrig=(V.rTrig===v?null:v);render();break;
+    case 'rescueSave':{
+      S.urges.push({t:Date.now(),trigger:V.rTrig,before:V.rBefore,after:V.rAfter,secs:V.rSecs});save();
+      var msg='Logged. Every urge you ride out counts.';
+      if(V.rBefore&&V.rAfter){msg=V.rAfter<V.rBefore?'From '+V.rBefore+' down to '+V.rAfter+'. Urges fade.':'Logged. Staying with it counts, even when it stays strong.';}
+      V.tab='home';toast(msg);break;}
+    case 'rescueSkip':
+      S.urges.push({t:Date.now(),trigger:null,before:V.rBefore,after:null,secs:V.rSecs});save();
+      V.tab='home';toast('Well done. That is one more urge ridden out.');break;
+    case 'helpMsg':{
+      var cl=contactLabel();
+      copyText(DEFAULT_MSG,function(){toast(cl?'Message copied. Send it to '+cl+'.':'Message copied. Paste it to someone you trust.');},function(){toast('Could not copy. Send this: '+DEFAULT_MSG);});break;}
+    case 'slipOpen':V.modal='slip';render();break;
+    case 'slipConfirm':
+      S.longest=Math.max(S.longest||0,streak());S.slips.push(ymd(today()));S.started=Date.now();save();
+      V.modal=null;V.tab='home';toast('Day one starts now. A slip does not erase your progress.');break;
+    /* settings */
+    case 'copyData':{
+      var json=JSON.stringify(S,null,2);
+      copyText(json,function(){toast('Data copied.');},function(){V.dataText=json;render();});break;}
+    case 'restoreOpen':V.restoreOpen=true;render();break;
+    case 'restoreNow':
+      try{
+        var o=JSON.parse(V.restoreText),d=defaults();
+        if(!o||typeof o!=='object'||Array.isArray(o)||!o.onboarded)throw new Error('bad');
+        for(var key in d){if(o[key]!==undefined&&(d[key]===null||(typeof o[key]===typeof d[key]&&Array.isArray(o[key])===Array.isArray(d[key]))))d[key]=o[key];}
+        d.pin=S.pin;S=d;save();V.restoreOpen=false;V.restoreText='';V.modal=null;V.draft=null;toast('Data restored.');
+      }catch(e){toast('That is not valid Stillwater data. Copy it again from Settings.');}
+      break;
+    case 'erase':V.erase=true;render();break;
+    case 'eraseConfirm':
+      try{localStorage.removeItem(KEY);}catch(e){}
+      S=defaults();V.modal=null;V.tab='home';V.draft=null;V.erase=false;V.pinFlow=null;render();break;
+    /* pin */
+    case 'pinSet':V.modal=null;V.pinFlow='new';V.pinBuf='';V.pinFirst='';V.pinMsg='';render();break;
+    case 'pinOff':S.pin='';save();toast('PIN lock is off.');break;
+    case 'pinCancel':V.pinFlow=null;V.pinBuf='';V.pinMsg='';V.modal='settings';render();break;
+    case 'forgot':V.forgot=true;render();break;
+    case 'pinErase':
+      try{localStorage.removeItem(KEY);}catch(e){}
+      S=defaults();V.pinFlow=null;V.forgot=false;V.pinBuf='';V.pinMsg='';V.tab='home';render();break;
+    case 'key':
+      if(V.pinBuf.length<4)V.pinBuf+=v;
+      if(V.pinBuf.length===4){pinDone();}else render();
+      break;
+    case 'keydel':V.pinBuf=V.pinBuf.slice(0,-1);render();break;
+  }
+}
+function pinDone(){
+  var b=V.pinBuf;V.pinBuf='';
+  if(V.pinFlow==='unlock'){
+    if(hpin(b)===S.pin){V.pinFlow=null;V.pinMsg='';V.forgot=false;}
+    else V.pinMsg='That PIN is not right. Try again.';
+  }else if(V.pinFlow==='new'){V.pinFirst=b;V.pinFlow='confirm';V.pinMsg='';}
+  else if(V.pinFlow==='confirm'){
+    if(b===V.pinFirst){S.pin=hpin(b);save();V.pinFlow=null;V.pinMsg='';V.pinFirst='';V.modal='settings';toast('PIN lock is on.');return;}
+    V.pinFlow='new';V.pinFirst='';V.pinMsg='The PINs did not match. Start again.';
+  }
+  render();
+}
+
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-a]');
+  if(!el)return;
+  if(el.getAttribute('data-bg')&&e.target!==el)return;
+  act(el.getAttribute('data-a'),el.getAttribute('data-v'));
+});
+document.addEventListener('input',function(e){
+  var t=e.target,id=t&&t.id;
+  if(id==='note'&&V.draft){
+    V.draft.note=t.value;
+    if(V.saved){V.saved=false;var sb=document.getElementById('savebtn');if(sb)sb.innerHTML='<button class="btn primary" data-a="saveReflect">Save today\'s reflection</button>';}
+  }else if(id==='plantext'){V.planText=t.value;}
+  else if(id==='cname'){S.contact.name=t.value;save();}
+  else if(id==='cnum'){S.contact.num=t.value;save();}
+  else if(id==='letter'){S.letter=t.value;save();}
+  else if(id==='restoretext'){V.restoreText=t.value;}
+});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&V.modal){V.modal=null;render();}});
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden&&S.pin&&S.onboarded&&!V.pinFlow){V.pinFlow='unlock';V.pinBuf='';V.pinMsg='';V.forgot=false;V.modal=null;render();}
+});
+render();
+})();
+</script>
+</body>
+</html>
